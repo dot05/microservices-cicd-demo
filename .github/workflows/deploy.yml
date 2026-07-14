@@ -1,0 +1,39 @@
+name: Build and Deploy Microservices
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: Build users-service image
+        run: docker build -t users-service:latest ./users-service
+
+      - name: Build orders-service image
+        run: docker build -t orders-service:latest ./orders-service
+
+      - name: import images to k3s
+        run: |
+          docker save users-service:latest | sudo k3s ctr images import -
+          docker save orders-service:latest | sudo k3s ctr images import -
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f users-deployment.yaml
+          kubectl apply -f orders-deployment.yaml
+
+      - name: Restart deployments to pick up new images
+        run: |
+          kubectl rollout restarts deployment/users-service
+          kubectl rollout restarts deployment/orders-service
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/users-service --timeout=60s
+          kubectl rollout status deployment/orders-service --timeout=60s
