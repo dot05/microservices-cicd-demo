@@ -32,7 +32,7 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f k8s/ users-deployment.yaml
+          kubectl apply -f k8s/users-deployment.yaml
           kubectl apply -f k8s/orders-deployment.yaml
 
       - name: Restart deployments to pick up new images
