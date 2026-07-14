@@ -37,8 +37,8 @@ jobs:
 
       - name: Restart deployments to pick up new images
         run: |
-          kubectl rollout restarts deployment/users-service
-          kubectl rollout restarts deployment/orders-service
+          kubectl rollout restart deployment/users-service
+          kubectl rollout restart deployment/orders-service
 
       - name: Wait for rollout
         run: |
