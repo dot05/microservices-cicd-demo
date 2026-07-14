@@ -12,6 +12,13 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v4
 
+      - name: Debug - show working directory
+        run: |
+          pwd
+          ls -la
+          ls -la k8s/
+
+
       - name: Build users-service image
         run: docker build -t users-service:latest ./users-service
 
@@ -25,8 +32,8 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f users-deployment.yaml
-          kubectl apply -f orders-deployment.yaml
+          kubectl apply -f k8s/ users-deployment.yaml
+          kubectl apply -f k8s/orders-deployment.yaml
 
       - name: Restart deployments to pick up new images
         run: |
